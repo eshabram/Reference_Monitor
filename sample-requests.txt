@@ -1,0 +1,10 @@
+userE,file5,r
+userA,file3,w
+userE,file4,o
+userE,file6,o
+userE,file7,w
+userB,file6,r
+userD,file1,w
+userD,file3,w
+userF,file1,r
+userA,file9,w

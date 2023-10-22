@@ -1,0 +1,6 @@
+remove,userA,file3,r
+remove,userE,file3,r
+remove,userE,file3,w
+remove,userD,file3,o
+remove,userD,file3,r
+remove,userD,file3,w
