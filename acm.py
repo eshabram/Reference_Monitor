@@ -120,6 +120,7 @@ class Files:
         success = False
 
         while True:
+            # iterate through the files, and check the permissions
             if current != file:
                 if current.point is not None:
                     current = current.point
@@ -193,7 +194,7 @@ def load_acm(filepath):
     try:
         # read in and store the files as tuples
         with open(filepath, 'r') as file:
-            tuples = [tuple(line.strip().split(',')) for line in file.readlines()]
+            tuples = [tuple(line.strip().split(',')) for line in file.readlines() if line.strip() != '']
     except Exception as e:
         print(f'Error: {e}') 
     
@@ -270,28 +271,47 @@ def print_acm():
 
 def update_acm(filepath):
     global users
+    global file_list
     tuples = []
 
     try:
         with open(filepath, 'r') as file:
-            tuples = [tuple(line.strip().split(',')) for line in file.readlines()]
+            tuples = [tuple(line.strip().split(',')) for line in file.readlines() if line.strip() != '']
     except Exception as e:
         print(f'Error: {e}')     
         
-    for entry in tuples:    
+    for entry in tuples:   
         # add the privilege
         if entry[0] == 'add':
             priv = convert_orw(entry[3])
             file = Files(entry[2], priv, entry[1])
             if entry[1] in users:
-                users[entry[1]].add_link(file)
+                success = users[entry[1]].add_link(file)
             else:
                 users[entry[1]] = file
+                success = True
+            if success:
+                message = '\033[32mSuccessful Update\033[0m'
+            else:
+                message = '\033[31mInvalid Update: Entry Not Found\033[0m'                
+            print(f'{entry[0]},{entry[1]},{entry[2]},{entry[3]}: {message}')
         # remove the privilege
         else:
-            priv = convert_orw(entry[3])
-            file = Files(entry[2], priv, entry[1])
-            users[entry[1]].remove_privilege(file)
+            # check that the user/file exists
+            if entry[1] in users:
+                if entry[2] in file_list:
+                    priv = convert_orw(entry[3])
+                    file = Files(entry[2], priv, entry[1])
+                    success = users[entry[1]].remove_privilege(file)
+                else:
+                    success = False
+            else:
+                success = False
+            if success:
+                message = '\033[32mSuccessful Update\033[0m'
+            else:
+                message = '\033[31mInvalid Update: Entry Not Found\033[0m'
+            print(f'{entry[0]},{entry[1]},{entry[2]},{entry[3]}: {message}')
         
 def eval_acm(filepath):
     global users
@@ -299,10 +319,11 @@ def eval_acm(filepath):
 
     try:
         with open(filepath, 'r') as file:
-            tuples = [tuple(line.strip().split(',')) for line in file.readlines()]
+            tuples = [tuple(line.strip().split(',')) for line in file.readlines() if line.strip() != '']
     except Exception as e:
         print(f'Error: {e}')  
     
+    # iterate through, checking that the user or file exists
     for entry in tuples:
         user = entry[0]
         filename = entry[1]
@@ -310,6 +331,7 @@ def eval_acm(filepath):
         if user in users:
             if filename in file_list:
                 file = Files(filename, priv, user)
+                # call the eval method to run the check
                 permit = users[user].eval(file)
                 if permit:
                     print(f'{user},{filename},{file}: \033[32mPERMIT\033[0m')
@@ -317,9 +339,9 @@ def eval_acm(filepath):
                     print(f'{user},{filename},{file}: \033[31mDENY\033[0m')
 
             else:
-                print('File does not exist.')   
+                print(f'{user},{filename},{file}: \033[31mFile does not exist.\033[0m')   
         else:
-            print('User does not exist.')    
+            print(f'{user},{filename},{file}: \033[31mUser does not exist.\033[0m')    
 
 def run_acm():
     first = True

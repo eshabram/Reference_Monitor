@@ -4,3 +4,9 @@ remove,userE,file3,w
 remove,userD,file3,o
 remove,userD,file3,r
 remove,userD,file3,w
+remove,userD,file1,r
+remove,userD,file6,r
+remove,userK,file9,r
+
+
+remove,userD,file6,w
