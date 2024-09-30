@@ -8,3 +8,6 @@ filepath.
 
 NOTE: There is a hidden option to print out the linked list version, which is how it is actually stored, but 
 can be hard to read. Use option '6' for this print.
+
+Here is a sample output of loading in the ```input-acm-entries.txt``` file and printing the ACM and ACL:
+![output file](/assets/output.png)
